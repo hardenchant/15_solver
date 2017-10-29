@@ -1,5 +1,4 @@
-# all: tests
-all:
+all: tests
 	g++ ./15_solver_cpp.cpp ./15_board/*.cpp -o solver
 
 tests: libgtest.a
