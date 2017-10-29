@@ -3,6 +3,7 @@
 #include <unordered_set>
 #include <vector>
 #include "15_board/board_state.h"
+#include <fstream>
 
 // ToDo
 // - Сделать проверку комбинаторным способом на наличие решения
@@ -12,6 +13,10 @@
 // - Память пока что не очищается в конце программы
 
 using namespace std;
+
+ofstream fout("answer.out");
+
+
 
 void a_star(board_state* cur) {
     //посещённые
@@ -33,10 +38,11 @@ void a_star(board_state* cur) {
         if (p->manh_distance() == 0) {
             cout << "SOLVED" << endl;
             auto previous = p->get_previous();
+            fout << previous.size() + 1 << endl;
             for (int i = 0; i < previous.size(); ++i) {
-                cout << *previous[i] << endl;
+                fout << *previous[i] << endl;
             }
-            cout << *p << endl;
+            fout << *p << endl;
             break;
         }
         auto neighbours = p->get_neighbours_state();
@@ -52,14 +58,15 @@ void a_star(board_state* cur) {
 }
 
 int main() {
-    int pole[16] = {12, 5, 7, 1, 13, 8, 6, 2, 14, 4, 3, 11, 15, 10, 9, 0};
+    int pole[16] = {2, 10, 9, 1, 4, 15, 14, 11, 8, 6, 3, 5, 13, 12, 7, 0};
 
     board_state* a = new board_state(4, pole);
 
     cout << a->manh_distance() << endl;
 
     a_star(a);
-
     delete a;
+
+    fout.close();
     return 0;
 }
