@@ -1,9 +1,9 @@
+#include <fstream>
 #include <iostream>
 #include <queue>
 #include <unordered_set>
 #include <vector>
 #include "15_board/board_state.h"
-#include <fstream>
 
 // ToDo
 // - Сделать проверку комбинаторным способом на наличие решения
@@ -14,57 +14,23 @@
 
 using namespace std;
 
-ofstream fout("answer.out");
-
-
-
-void a_star(board_state* cur) {
-    //посещённые
-    unordered_set<board_state*, size_t (*)(board_state*),
-                  bool (*)(board_state*, board_state*)>
-        visited(10, board_state::hash, board_state::compare_ptrs);
-
-    //очередь с приоритетом с переопределением сравнения, чтобы сравнивались по
-    //наименьшему манхеттену
-    priority_queue<board_state*, vector<board_state*>,
-                   bool (*)(board_state*, board_state*)>
-        pqueue(board_state::compare_manh_dist);
-    pqueue.push(cur);
-    visited.insert(cur);
-    while (!pqueue.empty()) {
-        board_state* p = pqueue.top();
-        pqueue.pop();
-
-        if (p->manh_distance() == 0) {
-            cout << "SOLVED" << endl;
-            auto previous = p->get_previous();
-            fout << previous.size() + 1 << endl;
-            for (int i = 0; i < previous.size(); ++i) {
-                fout << *previous[i] << endl;
-            }
-            fout << *p << endl;
-            break;
-        }
-        auto neighbours = p->get_neighbours_state();
-        for (int i = 0; i < neighbours.size(); ++i) {
-            auto res = visited.insert(neighbours[i]);
-            if (res.second) {
-                pqueue.push(neighbours[i]);
-            } else {
-                delete neighbours[i];
-            }
-        }
-    }
-}
 
 int main() {
     int pole[16] = {2, 10, 9, 1, 4, 15, 14, 11, 8, 6, 3, 5, 13, 12, 7, 0};
+    
+    // ifstream fin("task.in");
+    ofstream fout("solution.out");
+    
+
 
     board_state* a = new board_state(4, pole);
 
-    cout << a->manh_distance() << endl;
+    auto vect = board_state::a_star(a);
+    fout << "Solution size: " << vect.size() << endl;
+    for (int i = 0; i < vect.size(); ++i){
+        fout << *vect[i] << endl;
+    }
 
-    a_star(a);
     delete a;
 
     fout.close();

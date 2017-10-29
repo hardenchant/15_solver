@@ -7,6 +7,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <unordered_set>
+#include <queue>
 #include "utils.h"
 
 class board_state {
@@ -21,9 +23,9 @@ class board_state {
     board_state(const board_state& obj) = delete;
     ~board_state();
 
-    std::vector<board_state*> get_neighbours_state();
+    const std::vector<board_state*> get_neighbours_state();
+    const std::vector<board_state*> get_previous();
 
-    std::vector<board_state*> get_previous() { return previous_states; }
 
     int manh_distance(); // манхэттенское расстояние
     int linear_conflict();
@@ -31,7 +33,6 @@ class board_state {
     int last_move();
 
     const bool operator==(const board_state& other);
-
     friend std::ostream& operator<<(std::ostream& os, board_state& c);
 
     static size_t hash(
@@ -45,6 +46,9 @@ class board_state {
                                                      //указателям, то же самое
                                                      //что == только для
                                                      //указателей
+
+    static std::vector<board_state*> a_star(board_state* cur);
+
 };
 
 #endif
