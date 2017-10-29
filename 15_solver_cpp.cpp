@@ -36,6 +36,7 @@ void a_star(board_state* cur) {
             for (int i = 0; i < previous.size(); ++i) {
                 cout << *previous[i] << endl;
             }
+            cout << *p << endl;
             break;
         }
         auto neighbours = p->get_neighbours_state();
@@ -48,7 +49,6 @@ void a_star(board_state* cur) {
             }
         }
     }
-    cout << "UNDEFINED BEHAVIOR" << endl;
 }
 
 int main() {

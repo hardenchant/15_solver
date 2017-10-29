@@ -96,9 +96,12 @@ bool board_state::compare_manh_dist(board_state* const a,
     return a->manh_distance() >= b->manh_distance();
 }
 
-std::ostream& operator<<(std::ostream& os, board_state& c) {
-    for (int i = 0; i < c.size; ++i) {
-        os << c.board[i] << " ";
+std::ostream& operator<<(std::ostream& os, board_state& state) {
+    os << "-----------------------" << std::endl;
+    for (int i = 0; i < state.size; ++i) {
+        if (i % state.n == 0) os << std::endl;
+        os << std::setw(4) << state.board[i] << " ";
     }
+    os << std::endl;
     return os;
 }
