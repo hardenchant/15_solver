@@ -1,10 +1,10 @@
-all: tests
-	g++ ./15_solver_cpp.cpp -o solver
+# all: tests
+all:
+	g++ ./15_solver_cpp.cpp ./15_board/*.cpp -o solver
 
 tests: libgtest.a
 	g++ -isystem ./googletest/include -pthread ./test_simple.cpp libgtest.a -o test
 	./test
-	rm test gtest-all.o libgtest.a
 
 libgtest.a: gtest-all.o
 	ar -rv libgtest.a gtest-all.o

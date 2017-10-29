@@ -1,139 +1,65 @@
 #include <iostream>
-#include <vector>
 #include <queue>
-#include <utility>
-#include <set>
+#include <unordered_set>
+#include <vector>
+#include "15_board/board_state.h"
+
+// ToDo
+// - Сделать проверку комбинаторным способом на наличие решения
+// - Допилить интерфейс
+// - Мб нормальный вывод или нет
+// - Последний шаг не выводится пока что
+// - Память пока что не очищается в конце программы
 
 using namespace std;
 
-int mod(int a, unsigned n){ //in c++  -1 % 4 = -1 or 3 but i want = 3 always
-    int mod = a % n;
-    return mod < 0 ? mod + n : mod;
-}
-unsigned manh_distance_in_matrix(int a, int b, int n){ //a b - coords, n - one side size
-    return abs(a % n - b % n) + abs((int)(a / n) - (int)(b / n));
-}
+void a_star(board_state* cur) {
+    //посещённые
+    unordered_set<board_state*, size_t (*)(board_state*),
+                  bool (*)(board_state*, board_state*)>
+        visited(10, board_state::hash, board_state::compare_ptrs);
 
-class board_state {
-    int n; //width of board
-    int size; //size = n^2
-    int* board;
-    vector<board_state*> previous_states;
-public:
-    board_state(int n, int* board) : n(n), size(n * n) {
-        this->board = new int[size];
-        for(int i = 0; i < size; ++i){
-            this->board[i] = board[i];
-        }
-    }
-    board_state(board_state* parent, int swap1, int swap2) {
-        n = parent->n;
-        size = parent->size;
-        board = new int[size];
-        for(int i = 0; i < size; ++i){
-            board[i] = parent->board[i];
-        }
-        swap(board[swap1], board[swap2]);
-        previous_states = parent->previous_states;
-        previous_states.push_back(parent);
-    }
-    ~board_state(){
-        delete[] board;
-    }
-    board_state(const board_state& obj) = delete;
-    vector<board_state*> get_neighbours_state(){
-        vector<board_state*> neighbours;
-        int zero_coord = -1;
-        for(int i = 0; i < size; ++i){
-            if (board[i] == 0){
-                zero_coord = i;
-                break;
-            }
-        }
-        if (zero_coord + 1 < 16 && manh_distance_in_matrix(zero_coord, zero_coord + 1, n) == 1){
-            board_state* p = new board_state(this, zero_coord, zero_coord + 1);
-            neighbours.push_back(p);
-        }
-        if (zero_coord - 1 >= 0 && manh_distance_in_matrix(zero_coord, zero_coord - 1, n) == 1){
-            board_state* p = new board_state(this, zero_coord, zero_coord - 1);
-            neighbours.push_back(p);
-        }
-        if (zero_coord - n >= 0 && manh_distance_in_matrix(zero_coord, zero_coord - n, n) == 1){
-            board_state* p = new board_state(this, zero_coord, zero_coord - n);
-            neighbours.push_back(p);
-        }
-        if (zero_coord + n >= 0 && manh_distance_in_matrix(zero_coord, zero_coord + n, n) == 1){
-            board_state* p = new board_state(this, zero_coord, zero_coord + n);
-            neighbours.push_back(p);
-        }
-        return neighbours;
-    }
-
-    int manh_distance(){
-        int distance = 0;
-        for(int i = 0; i < size; ++i){
-            //сложные подсчёты которые невозможно описать
-            // distance += abs(mod(board[i] - 1, size) % n - i % n) + abs((int)(mod(board[i] - 1, size) / n) - (int)(i / n));
-            distance += manh_distance_in_matrix(mod(board[i] - 1, size), i, n);
-        }
-        return distance;
-    }
-    int linear_conflict(){
-        return 0;
-    }
-    int corner_tiles(){
-        return 0;
-    }
-    int last_move(){
-        return 0;
-    }
-
-    const bool operator == (const board_state& other){
-        if (n != other.n) return false;
-
-        for (int i = 0; i < size; ++i){
-            if (board[i] != other.board[i]) return false;    
-        }
-
-        return true;
-    }
-};
-
-void a_star(board_state* cur){
-    set<board_state*> visited; //посещённые AAAAAAAAAA переделать тут кароче должны храниться хэши массивов
-    auto comp = [](board_state* a, board_state* b) { return a->manh_distance() > b->manh_distance(); };    
-    //очередь с приоритетом с переопределением сравнения, чтобы сравнивались по наименьшему манхеттену
-    priority_queue<board_state*, vector<board_state*>, decltype(comp)> pqueue(comp);
+    //очередь с приоритетом с переопределением сравнения, чтобы сравнивались по
+    //наименьшему манхеттену
+    priority_queue<board_state*, vector<board_state*>,
+                   bool (*)(board_state*, board_state*)>
+        pqueue(board_state::compare_manh_dist);
     pqueue.push(cur);
-    while(!pqueue.empty()){
+    visited.insert(cur);
+    while (!pqueue.empty()) {
         board_state* p = pqueue.top();
         pqueue.pop();
 
+        if (p->manh_distance() == 0) {
+            cout << "SOLVED" << endl;
+            auto previous = p->get_previous();
+            for (int i = 0; i < previous.size(); ++i) {
+                cout << *previous[i] << endl;
+            }
+            break;
+        }
+        auto neighbours = p->get_neighbours_state();
+        for (int i = 0; i < neighbours.size(); ++i) {
+            auto res = visited.insert(neighbours[i]);
+            if (res.second) {
+                pqueue.push(neighbours[i]);
+            } else {
+                delete neighbours[i];
+            }
+        }
     }
-
+    cout << "UNDEFINED BEHAVIOR" << endl;
 }
 
-int main(){
-    auto comp = [](board_state* a, board_state* b) {
-        // это кароче так надо чтобы сравнивалось классно всё
-        return !(*a == *b);
-    };
-    set<board_state*> visited;
-    int pole[16] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,0,15};
-    board_state* a = new board_state(4, pole);
-    visited.insert(a);
-    board_state* b = new board_state(4, pole);
-    
-    if (*a == *b) {
-        cout << "hello a = b" << endl;
-    }
+int main() {
+    int pole[16] = {12, 5, 7, 1, 13, 8, 6, 2, 14, 4, 3, 11, 15, 10, 9, 0};
 
-    if (visited.count(b) > 0){
-        cout << "hey" << endl;
-    }
+    board_state* a = new board_state(4, pole);
+
     cout << a->manh_distance() << endl;
 
+    a_star(a);
+
     delete a;
-    delete b;
     return 0;
 }
