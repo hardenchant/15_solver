@@ -377,7 +377,7 @@ time pypy3 solver15.py
 
 Получаем 4,128s. Что всего в 4 раза медленнее чем на С++.
 
-### Годные ссылки и источники
+## Годные ссылки и источники
 - https://www.cs.princeton.edu/courses/archive/fall12/cos226/assignments/8puzzle.html
 
 - http://www.cs.cmu.edu/afs/cs/academic/class/15859-f01/www/notes/15-puzzle.pdf
