@@ -36,5 +36,19 @@ class test_chain15(unittest.TestCase):
             (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 13, 14, 15, 12)).board_state)
 
 
+class test_solver15(unittest.TestCase):
+    def test_solve(self):
+        # start = chain15((1,2,6,3,4,9,5,7,8,13,11,15,12,14,0,10))
+        # start = chain15((1,2,6,3,4,9,5,7,8,13,11,15,12,0,14,10))
+        # start = chain15(( 1, 3, 4, 8, 5, 2, 11, 7, 10, 6,0,12,9,13,14,15))
+        # end = chain15((1, 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13,14,15,0))
+        start = chain15((5, 1, 9, 3, 11, 13, 6, 8, 14, 10, 4, 15, 0, 12, 7, 2))
+        end = chain15((1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0))
+
+        # self.assertEqual(a_star.a_star(start, end.last_node()),
+        # print(result)
+
+
+
 if __name__ == "__main__":
     unittest.main()
