@@ -18,7 +18,7 @@ Some other tests:
 python3.5 tests.py
 pypy3 tests.py         #faster stronger harder better
 ```
-Testing can take a long time, be patient and have a tea. ^^
+Testing can take a long time (over 20 - 40 sec), be patient and have a tea. ^^
 
 
 ## Задача
