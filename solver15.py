@@ -1,7 +1,6 @@
 import a_star
-import time  # For Debug
 from math import sqrt
-
+import argparse
 
 def manh_dst_matrix(a, b, n):
     """Find manhattan distance between `a` and `b` in matrix of size `n`
@@ -78,7 +77,7 @@ class chain15:
         return len(self.history)
 
     def f(self):
-        return self.h()
+        return self.h() + self.g()
 
     def __lt__(self, other):
         return self.f() < other.f()
@@ -91,25 +90,25 @@ class chain15:
         if zero_coord + 1 < self.size ** 2 and manh_dst_matrix(zero_coord, zero_coord + 1, self.size) == 1:
             new_state = self.board_state.copy()
             new_state[zero_coord], new_state[zero_coord + 1] = new_state[zero_coord + 1], new_state[zero_coord]
-            neighs.append(chain15(new_state, self.history + [self.board_state]))
+            neighs.append(chain15(new_state, self.history + [self]))
 
         if zero_coord - 1 >= 0 and manh_dst_matrix(zero_coord, zero_coord - 1, self.size) == 1:
             new_state = self.board_state.copy()
             new_state[zero_coord], new_state[zero_coord - 1] = new_state[zero_coord - 1], new_state[zero_coord]
-            neighs.append(chain15(new_state, self.history + [self.board_state]))
+            neighs.append(chain15(new_state, self.history + [self]))
 
         if zero_coord + self.size < self.size ** 2 and manh_dst_matrix(zero_coord, zero_coord + self.size,
                                                                        self.size) == 1:
             new_state = self.board_state.copy()
             new_state[zero_coord], new_state[zero_coord + self.size] = new_state[zero_coord + self.size], new_state[
                 zero_coord]
-            neighs.append(chain15(new_state, self.history + [self.board_state]))
+            neighs.append(chain15(new_state, self.history + [self]))
 
         if zero_coord - self.size >= 0 and manh_dst_matrix(zero_coord, zero_coord - self.size, self.size) == 1:
             new_state = self.board_state.copy()
             new_state[zero_coord], new_state[zero_coord - self.size] = new_state[zero_coord - self.size], new_state[
                 zero_coord]
-            neighs.append(chain15(new_state, self.history + [self.board_state]))
+            neighs.append(chain15(new_state, self.history + [self]))
 
         # # Debug
         # for i in neighs:
@@ -120,18 +119,24 @@ class chain15:
 
 
 if __name__ == '__main__':
-    # start = chain15((1,2,6,3,4,9,5,7,8,13,11,15,12,14,0,10))
-    # start = chain15((1,2,6,3,4,9,5,7,8,13,11,15,12,0,14,10))
-    # start = chain15(( 1, 3, 4, 8, 5, 2, 11, 7, 10, 6,0,12,9,13,14,15))
-    # end = chain15((1, 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13,14,15,0))
-    start = chain15((5, 1, 9, 3, 11, 13, 6, 8, 14, 10, 4, 15, 0, 12, 7, 2))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("input", help="Input file name")
+    parser.add_argument("output", help="Output file name")
+    args = parser.parse_args()
+
+    board_str = ""
+
+    with open(args.input) as input_file:
+        board_str = input_file.read()
+
+    start_state = list(map(int, board_str.split()))
+    start = chain15(start_state)
     end = chain15((1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0))
-    print(str(start))  # Debug
 
     result = a_star.a_star(start, end.last_node())
-    print(result)
-    print(len(result.history))
-    # # Debug
-    # for node in result.history:
-    #     print (node)
-    # print(result.board_state)
+    with open(args.output, 'w') as output_file:
+        print(str(len(result.history)) ,file=output_file)
+        for node in result.history:
+            print(str(node), file=output_file)
+            print("-------------------------", file=output_file)
+        print(str(result), file=output_file)

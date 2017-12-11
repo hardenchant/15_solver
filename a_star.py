@@ -20,7 +20,6 @@ def a_star(start_chain, goal_node):
         cur_chain = heappop(chains_queue)
         cur_node = cur_chain.last_node()
         if cur_node == goal_node:
-            print(len(node_hash))
             return cur_chain
         node_hash[cur_node] = cur_chain.g()
         for chain in cur_chain.get_neighbours():
