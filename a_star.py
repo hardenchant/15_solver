@@ -8,6 +8,7 @@ from heapq import heappop, heappush
 # and overload of `__eq__` which return result of last move in decision tree.
 # `goal` - value which compare with `last_move`; its a target of this algh
 #
+# `last_node` - must be hashable uniq value
 # `heapqpop` working as LIFO if keys are equal
 # it means that algh will be worked as deep search in this case
 

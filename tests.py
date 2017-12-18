@@ -2,12 +2,12 @@ import solver15
 import filecmp
 import a_star
 
+"""
+This test checks whether the output is correct and the algorithm works in your cfg.
+It also shows what should be the input and output of the program.
+"""
+
 if __name__ == '__main__':
-    # proc = subprocess.check_call(["python3.5", "solver15.py", "in.dat", "test_out.ans"], stdout=subprocess.STDOUT)
-    # if filecmp.cmp("test_out.ans", "out.ans"):
-    #     print("Test complete!")
-    # else:
-    #     print("Test error!")
     board_str = ""
 
     with open("in.dat") as input_file:
